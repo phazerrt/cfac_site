@@ -44,13 +44,25 @@ Types: `./vendor/bin/sail npm run types:check`.
 The contact page's enquiry form doesn't store anything. It opens WhatsApp (or the mail app) with the
 message already filled in.
 
-## Production (not deployed yet)
+## Staging: https://cfac.phazerrt.com
 
-`compose.prod.yaml` + `Dockerfile` mirror zuv: `cfac-prod-{nginx,php,ssr,mysql,cloudflared}`, project
-name pinned `cfac-prod`, no published ports. Before the first `up`: create the Cloudflare Tunnel
-`cfac` (ingress → `http://nginx:80`), store its token in `~/.secrets/cfac-cloudflared.env`, write
-`.env.production` (mode 600), and add a Configuration Rule turning **Email Obfuscation off** for the
-host (it breaks Vue hydration, same as on zuv).
+```bash
+docker compose -f compose.prod.yaml up -d --build
+docker compose -f compose.prod.yaml exec php php artisan migrate --force
+docker compose -f compose.prod.yaml exec php php artisan db:seed --class=SiteContentSeeder --force
+```
+
+Containers `cfac-prod-{nginx,php,ssr,mysql,cloudflared}-1` (project name pinned `cfac-prod`). No
+published host ports: traffic arrives through the Cloudflare Tunnel `cfac`
+(`e0e2a16c-e3f8-4e35-814f-efdb1d4e37e5`, ingress `cfac.phazerrt.com → http://nginx:80`, token in
+`~/.secrets/cfac-cloudflared.env`). `ssr` is the Node Inertia SSR server (`INERTIA_SSR_URL=http://ssr:13714`).
+Secrets live in the git-ignored `.env.production` (mode 600).
+
+A Cloudflare Configuration Rule turns **Email Obfuscation off for `cfac.phazerrt.com`**: Cloudflare
+rewriting the email address in the HTML breaks Vue hydration. Keep it off for this host.
+
+`SITE_INDEXABLE=false` (default) sends `noindex` and a disallow-all `robots.txt`. Set it to `true` on the
+owner's real domain.
 
 ## To confirm with the owner
 
