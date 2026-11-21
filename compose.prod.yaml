@@ -1,0 +1,87 @@
+# Production / staging stack for https://cfac.phazerrt.com (planned)
+#   docker compose -f compose.prod.yaml up -d --build
+# Project name is pinned so container/volume names don't depend on the directory
+# and never collide with the Sail dev project ("cfac").
+# All secrets/config come from .env.production (git-ignored, mode 600).
+name: cfac-prod
+
+services:
+    nginx:
+        build:
+            context: .
+            target: nginx
+        restart: unless-stopped
+        # No published ports: the only way in is the Cloudflare Tunnel below.
+        volumes:
+            - 'app-storage:/var/www/html/storage:ro'
+        depends_on:
+            php:
+                condition: service_started
+        networks:
+            - app
+    php:
+        build:
+            context: .
+            target: php
+        image: 'cfac-prod-php'
+        restart: unless-stopped
+        env_file:
+            - .env.production
+        volumes:
+            - './.env.production:/var/www/html/.env:ro'
+            - 'app-storage:/var/www/html/storage'
+        depends_on:
+            mysql:
+                condition: service_healthy
+            ssr:
+                condition: service_started
+        networks:
+            - app
+    ssr:
+        # Inertia server-side rendering (node bootstrap/ssr/app.js, port 13714).
+        build:
+            context: .
+            target: ssr
+        image: 'cfac-prod-ssr'
+        restart: unless-stopped
+        networks:
+            - app
+    mysql:
+        image: 'mysql:8.4'
+        restart: unless-stopped
+        # MYSQL_DATABASE / MYSQL_USER / MYSQL_PASSWORD / MYSQL_ROOT_PASSWORD come from .env.production
+        env_file:
+            - .env.production
+        volumes:
+            - 'mysql-data:/var/lib/mysql'
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'mysqladmin ping -h 127.0.0.1 -p"$$MYSQL_ROOT_PASSWORD" --silent',
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+        networks:
+            - app
+    cloudflared:
+        image: 'cloudflare/cloudflared:latest'
+        restart: unless-stopped
+        # Remotely-managed tunnel "cfac" (not created yet). Ingress is configured in Cloudflare:
+        # cfac.phazerrt.com -> http://nginx:80
+        command: tunnel --no-autoupdate run
+        env_file:
+            - /home/phazerrt/.secrets/cfac-cloudflared.env
+        depends_on:
+            nginx:
+                condition: service_started
+        networks:
+            - app
+
+networks:
+    app:
+
+volumes:
+    mysql-data:
+    app-storage:

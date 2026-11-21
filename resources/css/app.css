@@ -1,0 +1,356 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------
+ | Creative Factory brand tokens (public site)
+ | Orange sampled from the logo: #FA6634 (= brand-500). Ink is a warm black.
+ * ------------------------------------------------------------------ */
+@theme {
+    --font-display:
+        'Josefin Sans', 'Century Gothic', ui-sans-serif, system-ui, sans-serif;
+    --font-script: 'Great Vibes', 'Brush Script MT', cursive;
+
+    --color-brand-50: #fff4ef;
+    --color-brand-100: #ffe5d9;
+    --color-brand-200: #ffc8b0;
+    --color-brand-300: #fea37f;
+    --color-brand-400: #fd8457;
+    --color-brand-500: #fa6634;
+    --color-brand-600: #e84f1c;
+    --color-brand-700: #c13c13;
+    --color-brand-800: #993216;
+    --color-brand-900: #7c2c16;
+    --color-brand-950: #431309;
+
+    --color-ink-50: #f8f6f4;
+    --color-ink-100: #efebe7;
+    --color-ink-200: #ddd6cf;
+    --color-ink-300: #c2b8ae;
+    --color-ink-400: #9a8f85;
+    --color-ink-500: #776d64;
+    --color-ink-600: #5c534c;
+    --color-ink-700: #463f39;
+    --color-ink-800: #2b2622;
+    --color-ink-900: #1a1715;
+    --color-ink-950: #0d0b0a;
+
+    --color-cream: #fbf5ef;
+    --color-gold: #d9a441;
+
+    --color-whatsapp: #25d366;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --animate-marquee: marquee 40s linear infinite;
+    --animate-rise: rise 1s var(--ease-out-expo) both;
+    --animate-fade: fade 1.2s ease-out both;
+    --animate-scroll-cue: scroll-cue 2s ease-in-out infinite;
+
+    @keyframes marquee {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    @keyframes rise {
+        from {
+            opacity: 0;
+            transform: translateY(28px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes fade {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes scroll-cue {
+        0%,
+        100% {
+            transform: translateY(0);
+            opacity: 0.4;
+        }
+        50% {
+            transform: translateY(8px);
+            opacity: 1;
+        }
+    }
+}
+
+@theme inline {
+    --font-sans:
+        'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.87 0 0);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.87 0 0);
+}
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.145 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.145 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.396 0.141 25.723);
+    --destructive-foreground: oklch(0.637 0.237 25.331);
+    --border: oklch(0.269 0 0);
+    --input: oklch(0.269 0 0);
+    --ring: oklch(0.439 0 0);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.985 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(0.269 0 0);
+    --sidebar-ring: oklch(0.439 0 0);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* ------------------------------------------------------------------
+ | Public site
+ * ------------------------------------------------------------------ */
+@layer base {
+    body:has(.site-root) {
+        background-color: #fff;
+        color-scheme: light;
+    }
+
+    .site-root {
+        font-feature-settings: 'cv11', 'ss01', 'ss03';
+    }
+
+    .site-root ::selection {
+        background-color: var(--color-brand-500);
+        color: #fff;
+    }
+}
+
+@utility font-display-tight {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.02;
+}
+
+@utility font-script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* Thin orange corner brackets, borrowed from the logo frame. */
+@utility frame-corners {
+    position: relative;
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        width: 3.5rem;
+        height: 3.5rem;
+        pointer-events: none;
+        border-color: var(--color-brand-500);
+    }
+    &::before {
+        top: -0.75rem;
+        left: -0.75rem;
+        border-top-width: 3px;
+        border-left-width: 3px;
+    }
+    &::after {
+        right: -0.75rem;
+        bottom: -0.75rem;
+        border-right-width: 3px;
+        border-bottom-width: 3px;
+    }
+}
+
+/* Scroll reveal (v-reveal). Content is only hidden when JS has run (html.js),
+   and never for people who ask for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+    .js [data-reveal] {
+        opacity: 0;
+        transform: translateY(32px);
+        transition:
+            opacity 0.9s var(--ease-out-expo),
+            transform 0.9s var(--ease-out-expo);
+        transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    .js [data-reveal].is-revealed {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-root *,
+    .site-root *::before,
+    .site-root *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Fine film grain over dark sections, for depth. */
+.grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.mask-fade-x {
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 10%,
+        #000 90%,
+        transparent
+    );
+}
+
+/* Masonry gallery: CSS columns keep each photo's own aspect ratio. */
+.masonry {
+    column-gap: 1rem;
+}
+
+.masonry > * {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+}
+
+.no-scrollbar {
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
